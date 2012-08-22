@@ -2,6 +2,10 @@
 " Author:       Lowe Thiderman <lowe.thiderman@gmail.com>
 
 " Install this file as plugin/snakeskin.vim.
+"
+" TODO:
+" Autocommand that updates the file that has been written
+" Function that gets current class/function; suited for statusline
 
 if exists('g:loaded_snakeskin') || &cp
   finish
@@ -31,7 +35,8 @@ function! SnakeskinParse(fn, ...)
   let d = {}
   let d.fn = fn
   let d.indent = function('s:get_indent')
-  let d.data = function('s:get_data')
+  let d.get_data = function('s:get_data')
+  let d.data = d.get_data()
   let d.get_line = function('SnakeskinGetLine')
   let d.get_children = function('SnakeskinGetChildren')
   let d.get_level = function('SnakeskinGetLevel')
@@ -103,6 +108,7 @@ function! s:get_data() dict abort
       let data = add(data, [lnr, level, m[1], m[2]])
     endif
   endfor
+
   return data
 endfunction
 
@@ -186,7 +192,7 @@ endfunction
 " Data traversing {{{1
 
 function! SnakeskinGetLevel(level) dict abort
-  return filter(self.data(), 'v:val[1] == ' . a:level)
+  return filter(deepcopy(self.data), 'v:val[1] == ' . a:level)
 endfunction
 
 function! SnakeskinGetChildren(names, ...) dict abort
@@ -197,10 +203,10 @@ function! SnakeskinGetChildren(names, ...) dict abort
     return ret
   endif
 
-  let start = index(self.data(), line) + 1  " Start on the line after the match...
+  let start = index(self.data, line) + 1  " Start on the line after the match...
   let depth = line[1] + 1 " ...and only grab it's children.
 
-  for data in self.data()[start :]
+  for data in self.data[start :]
     if data[1] == depth
       let ret = add(ret, data)
     elseif data[1] < depth
@@ -215,7 +221,7 @@ function! SnakeskinGetLine(names, ...) dict abort
   let line = []
   let depth = 0
 
-  for data in self.data()
+  for data in self.data
     if data[3] == s:strip(a:names[depth])
       let depth = depth + 1
 
