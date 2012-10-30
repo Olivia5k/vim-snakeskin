@@ -5,7 +5,6 @@
 "
 " TODO:
 " Autocommand that updates the file that has been written
-" Function that gets current class/function; suited for statusline
 
 if exists('g:loaded_snakeskin') || &cp
   finish
@@ -41,9 +40,62 @@ function! SnakeskinParse(fn, ...)
   let d.get_children = function('SnakeskinGetChildren')
   let d.get_level = function('SnakeskinGetLevel')
   let d.complete = function('SnakeskinComplete')
+  let d.position = function('SnakeskinPosition')
+  let d.closest = function('SnakeskinClosestParent')
 
   let g:snakeskin[fn] = d
   return d
+endfunction
+" }}}
+" Statusline {{{1
+
+function! SnakeskinPosition() dict abort
+  let lnr = getpos('.')[1]
+  let closest = self.closest(lnr)
+
+  if closest == []
+    return []
+  endif
+
+  let idx = index(self.data, closest)
+  let depth = closest[1]
+  let ret = [closest[3]]
+
+  " Loop the data backwards, starting from the closest parent we found
+  for data in reverse(copy(self.data)[0:idx])
+    " If we are one level above what we were last time, we have a match
+    if depth != data[1]
+      let ret = insert(ret, data[3])
+      let depth -= 1
+    endif
+
+    " If we are at the top, we can break.
+    if depth == 0
+      break
+    endif
+  endfor
+
+  return ret
+endfunction
+
+function! SnakeskinClosestParent(lnr) dict abort
+  " Cursor positioned above earliest definition.
+  if a:lnr < self.data[0][0]
+    return []
+  endif
+
+  for idx in range(len(self.data))
+    if idx == len(self.data)
+      return self.data[-1]
+    endif
+
+    let data = self.data[idx]
+    let next = self.data[idx + 1]
+
+    if a:lnr >= data[0] && a:lnr < next[0]
+      return data
+    endif
+  endfor
 endfunction
 
 " }}}
