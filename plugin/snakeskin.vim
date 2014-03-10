@@ -314,11 +314,11 @@ function! SnakeskinEdit(cmd, fn, ...) abort
   endif
 endfunction
 
-com! -nargs=+ -complete=customlist,SnakeskinComplete Py :call SnakeskinEdit('edit', <f-args>)
-com! -nargs=+ -complete=customlist,SnakeskinComplete PE :call SnakeskinEdit('edit', <f-args>)
-com! -nargs=+ -complete=customlist,SnakeskinComplete PV :call SnakeskinEdit('vsplit', <f-args>)
-com! -nargs=+ -complete=customlist,SnakeskinComplete PS :call SnakeskinEdit('split', <f-args>)
-com! -nargs=+ -complete=customlist,SnakeskinComplete PT :call SnakeskinEdit('tabedit', <f-args>)
+" com! -nargs=+ -complete=customlist,SnakeskinComplete Py :call SnakeskinEdit('edit', <f-args>)
+" com! -nargs=+ -complete=customlist,SnakeskinComplete PE :call SnakeskinEdit('edit', <f-args>)
+" com! -nargs=+ -complete=customlist,SnakeskinComplete PV :call SnakeskinEdit('vsplit', <f-args>)
+" com! -nargs=+ -complete=customlist,SnakeskinComplete PS :call SnakeskinEdit('split', <f-args>)
+" com! -nargs=+ -complete=customlist,SnakeskinComplete PT :call SnakeskinEdit('tabedit', <f-args>)
 
 " }}}
 
