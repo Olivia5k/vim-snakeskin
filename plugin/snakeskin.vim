@@ -85,7 +85,7 @@ function! SnakeskinClosestParent(lnr) dict abort
   endif
 
   for idx in range(len(self.data))
-    if idx == len(self.data)
+    if idx + 1 == len(self.data)
       return self.data[-1]
     endif
 
